@@ -234,7 +234,7 @@ func ParseEndpointRegion(s string) string {
 func ParseAWSURLRegion(s string) string {
 	endpoint, err := url.Parse(s)
 	if err != nil {
-		return ""
+		return s
 	}
 	s = endpoint.Hostname()
 	s = strings.TrimSuffix(s, amazonawsCNSuffix)

@@ -7,8 +7,12 @@ import (
 	"github.com/jumpserver-dev/sdk-go/model"
 )
 
-func (s *JMService) UploadReplay(sid, gZipFile string) error {
+func (s *JMService) Upload(sessionID, gZipFile string) error {
 	version := model.ParseReplayVersion(gZipFile, model.Version3)
+	return s.UploadReplay(sessionID, gZipFile, version)
+}
+
+func (s *JMService) UploadReplay(sid, gZipFile string, version model.ReplayVersion) error {
 	var res map[string]interface{}
 	Url := fmt.Sprintf(SessionReplayURL, sid)
 	fields := make(map[string]string)
@@ -16,7 +20,7 @@ func (s *JMService) UploadReplay(sid, gZipFile string) error {
 	return s.authClient.PostFileWithFields(Url, gZipFile, fields, &res)
 }
 
-func (s *JMService) FinishReply(sid string) error {
+func (s *JMService) FinishReply(sid string) (model.Session, error) {
 	data := map[string]bool{"has_replay": true}
 	return s.sessionPatch(sid, data)
 }
@@ -26,14 +30,14 @@ func (s *JMService) CreateSession(sess model.Session) (ret model.Session, err er
 	return
 }
 
-func (s *JMService) SessionSuccess(sid string) error {
+func (s *JMService) SessionSuccess(sid string) (model.Session, error) {
 	data := map[string]bool{
 		"is_success": true,
 	}
 	return s.sessionPatch(sid, data)
 }
 
-func (s *JMService) SessionFailed(sid string, err error) error {
+func (s *JMService) SessionFailed(sid string, err error) (model.Session, error) {
 	data := map[string]interface{}{
 		"is_success":   false,
 		"error_reason": model.SessionReplayErrConnectFailed,
@@ -41,18 +45,18 @@ func (s *JMService) SessionFailed(sid string, err error) error {
 	return s.sessionPatch(sid, data)
 }
 
-func (s *JMService) SessionReplayFailed(sid string, err model.ReplayError) error {
+func (s *JMService) SessionReplayFailed(sid string, err model.ReplayError) (model.Session, error) {
 	data := map[string]interface{}{
 		"error_reason": err,
 	}
 	return s.sessionPatch(sid, data)
 }
 
-func (s *JMService) SessionDisconnect(sid string) error {
+func (s *JMService) SessionDisconnect(sid string) (model.Session, error) {
 	return s.SessionFinished(sid, common.NewNowUTCTime())
 }
 
-func (s *JMService) SessionFinished(sid string, time common.UTCTime) error {
+func (s *JMService) SessionFinished(sid string, time common.UTCTime) (resp model.Session, err error) {
 	data := map[string]interface{}{
 		"is_finished": true,
 		"date_end":    time,
@@ -60,10 +64,10 @@ func (s *JMService) SessionFinished(sid string, time common.UTCTime) error {
 	return s.sessionPatch(sid, data)
 }
 
-func (s *JMService) sessionPatch(sid string, data interface{}) error {
+func (s *JMService) sessionPatch(sid string, data interface{}) (resp model.Session, err error) {
 	Url := fmt.Sprintf(SessionDetailURL, sid)
-	_, err := s.authClient.Patch(Url, data, nil)
-	return err
+	_, err = s.authClient.Patch(Url, data, &resp)
+	return
 }
 
 func (s *JMService) GetSessionById(sid string) (data model.Session, err error) {

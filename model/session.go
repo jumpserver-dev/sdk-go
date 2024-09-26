@@ -70,9 +70,11 @@ const (
 )
 
 const (
+	SuffixGz         = ".gz"
 	SuffixReplayGz   = ".replay.gz"
 	SuffixCastGz     = ".cast.gz"
 	SuffixCast       = ".cast"
+	SuffixGuac       = ".guac"
 	SuffixPartReplay = ".part.gz"
 	SuffixReplayJson = ".replay.json"
 	SuffixReplayMP4  = ".replay.mp4"

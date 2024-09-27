@@ -50,6 +50,7 @@ func (c *ConnectToken) CreateSession(addr string,
 		LoginFrom:  loginFrom,
 		Type:       SessionType,
 		ErrReason:  LabelField(SessionReplayErrUnsupported),
+		TokenId:    c.Id,
 	}
 }
 

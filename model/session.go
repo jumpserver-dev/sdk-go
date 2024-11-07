@@ -23,10 +23,10 @@ func (s *LabelField) UnmarshalJSON(bytes []byte) error {
 		Label string `json:"label"`
 		Value string `json:"value"`
 	}
-	if err := json.Unmarshal(bytes, &labelValue); err != nil {
-		return err
+	if err := json.Unmarshal(bytes, &labelValue); err == nil {
+		*s = LabelField(labelValue.Value)
 	}
-	*s = LabelField(labelValue.Value)
+	*s = LabelField(strings.Trim(string(bytes), `"`))
 	return nil
 }
 

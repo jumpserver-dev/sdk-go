@@ -98,6 +98,7 @@ func (c *Client) Clone() Client {
 		cookies: make(map[string]string),
 		headers: make(map[string]string),
 		http:    &con,
+		cfg:     c.cfg,
 	}
 
 }

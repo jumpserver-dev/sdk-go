@@ -33,7 +33,8 @@ func (s ServerStorage) BulkSave(commands []*model.Command) (err error) {
 
 func (s ServerStorage) Upload(gZipFilePath, target string) (err error) {
 	sessionID := strings.Split(filepath.Base(gZipFilePath), ".")[0]
-	return s.JmsService.UploadReplay(sessionID, gZipFilePath)
+	version := model.ParseReplayVersion(gZipFilePath, model.Version3)
+	return s.JmsService.UploadReplay(sessionID, gZipFilePath, version)
 }
 
 func (s ServerStorage) TypeName() string {

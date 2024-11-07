@@ -25,6 +25,7 @@ func (s *LabelField) UnmarshalJSON(bytes []byte) error {
 	}
 	if err := json.Unmarshal(bytes, &labelValue); err == nil {
 		*s = LabelField(labelValue.Value)
+		return nil
 	}
 	*s = LabelField(strings.Trim(string(bytes), `"`))
 	return nil

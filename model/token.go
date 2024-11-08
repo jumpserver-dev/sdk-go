@@ -88,3 +88,17 @@ type ConnectMethod struct {
 	Label     string `json:"label"`
 	Value     string `json:"value"`
 }
+
+// token 授权和过期状态
+
+type TokenCheckStatus struct {
+	Detail  string `json:"detail"`
+	Code    string `json:"code"`
+	Expired bool   `json:"expired"`
+}
+
+const (
+	CodePermOk             = "perm_ok"
+	CodePermAccountInvalid = "perm_account_invalid"
+	CodePermExpired        = "perm_expired"
+)

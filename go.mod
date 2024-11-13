@@ -1,6 +1,6 @@
 module github.com/jumpserver-dev/sdk-go
 
-go 1.22.6
+go 1.22
 
 require (
 	github.com/Azure/azure-storage-blob-go v0.6.0

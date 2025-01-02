@@ -63,6 +63,9 @@ type ProtocolSetting struct {
 	PasswordSelector string `json:"password_selector"`
 	SubmitSelector   string `json:"submit_selector"`
 
+	Console  bool   `json:"console"`
+	AdDomain string `json:"ad_domain"`
+
 	// for redis 特殊处理的字段
 	AuthUsername bool `json:"auth_username"`
 

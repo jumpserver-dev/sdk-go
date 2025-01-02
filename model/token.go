@@ -102,3 +102,5 @@ const (
 	CodePermAccountInvalid = "perm_account_invalid"
 	CodePermExpired        = "perm_expired"
 )
+
+const ConnectApplet = "applet"

@@ -63,3 +63,8 @@ func (ak *AccessKey) SaveToFile(path string) error {
 	_, err = f.WriteString(fmt.Sprintf("%s:%s", ak.ID, ak.Secret))
 	return err
 }
+
+func LoadAccessKeyFromFile(keyPath string) (AccessKey, error) {
+	var ak AccessKey
+	return ak, ak.LoadFromFile(keyPath)
+}

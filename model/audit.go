@@ -1,6 +1,8 @@
 package model
 
 import (
+	"strings"
+
 	"github.com/jumpserver-dev/sdk-go/common"
 )
 
@@ -17,6 +19,16 @@ type FTPLog struct {
 	IsSuccess  bool           `json:"is_success"`
 	Session    string         `json:"session"`
 }
+
+func (f *FTPLog) TargetPath() string {
+	today := f.DateStart.UTC().Format(dateTimeFormat)
+	return strings.Join([]string{FtpTargetPrefix, today, f.ID}, "/")
+}
+
+const (
+	FtpTargetPrefix = "FTP_FILES"
+	dateTimeFormat  = "2006-01-02"
+)
 
 const (
 	OperateDownload = "download"

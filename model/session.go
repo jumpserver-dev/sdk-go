@@ -41,6 +41,7 @@ const (
 const (
 	LoginFromSSH LabelField = "ST"
 	LoginFromWeb LabelField = "WT"
+	LoginFromRT  LabelField = "RT"
 )
 
 type Session struct {
@@ -59,6 +60,7 @@ type Session struct {
 	Type       LabelField     `json:"type"`
 	ErrReason  LabelField     `json:"error_reason,omitempty"`
 	TokenId    string         `json:"token_id,omitempty"`
+	Comment    string         `json:"comment,omitempty"`
 }
 
 type ReplayVersion string

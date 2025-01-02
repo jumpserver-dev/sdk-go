@@ -143,6 +143,7 @@ const (
 	ProtocolK8S    = "k8s"
 	ProtocolSFTP   = "sftp"
 	ProtocolRedis  = "redis"
+	ProtocolRDP    = "rdp"
 )
 
 const (

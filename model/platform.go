@@ -40,6 +40,15 @@ func (p Platform) GetProtocol(protocol string) PlatformProtocol {
 	return PlatformProtocol{}
 }
 
+func (p *Platform) GetProtocolSetting(protocol string) (PlatformProtocol, bool) {
+	for i := range p.Protocols {
+		if p.Protocols[i].Name == protocol {
+			return p.Protocols[i], true
+		}
+	}
+	return PlatformProtocol{}, false
+}
+
 type PlatformProtocol struct {
 	Protocol
 	Setting ProtocolSetting `json:"setting"`

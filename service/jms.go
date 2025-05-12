@@ -36,7 +36,11 @@ func NewAuthJMService(opts ...Option) (*JMService, error) {
 	if opt.TimeOut < minTimeOut {
 		opt.TimeOut = minTimeOut
 	}
-	httpClient, err := httplib.NewClient(opt.CoreHost, opt.TimeOut)
+	httpOpts := make([]httplib.Opt, 0)
+	if opt.Insecure {
+		httpOpts = append(httpOpts, httplib.WithInsecure())
+	}
+	httpClient, err := httplib.NewClient(opt.CoreHost, opt.TimeOut, httpOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,6 +56,16 @@ type JMService struct {
 	opt        *option
 
 	sync.Mutex
+}
+
+func (s *JMService) RegisterTerminal(name, token, componentName string) (res model.Terminal, err error) {
+	data := map[string]string{"name": name, "comment": componentName, "type": componentName}
+	s.authClient.SetAuthSign(&httplib.CustomAuth{
+		AuthScheme: "BootstrapToken",
+		Token:      token,
+	})
+	_, err = s.authClient.Post(TerminalRegisterURL, data, &res)
+	return
 }
 
 func (s *JMService) GetUserById(userID string) (user *model.User, err error) {

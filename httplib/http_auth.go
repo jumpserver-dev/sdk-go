@@ -53,3 +53,14 @@ func (auth *BearerTokenAuth) Sign(r *http.Request) error {
 	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", auth.Token))
 	return nil
 }
+
+type CustomAuth struct {
+	AuthScheme string
+	Token      string
+}
+
+func (auth *CustomAuth) Sign(r *http.Request) error {
+	r.Header.Set("Authorization", fmt.Sprintf("%s %s",
+		auth.AuthScheme, auth.Token))
+	return nil
+}

@@ -92,3 +92,7 @@ const (
 
 	SuperConnectTokenCheckURL = "/api/v1/authentication/super-connection-token/%s/check/"
 )
+
+const (
+	FaceMonitorContextUrl = "/api/v1/authentication/face-monitor/context/"
+)

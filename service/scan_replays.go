@@ -10,7 +10,7 @@ import (
 	"github.com/jumpserver-dev/sdk-go/model"
 )
 
-func scanRemainReplays(apiClient *JMService, replayDir string) map[string]model.RemainReplay {
+func ScanRemainReplays(apiClient *JMService, replayDir string) map[string]model.RemainReplay {
 	allRemainReplays := make(map[string]model.RemainReplay)
 	_ = filepath.Walk(replayDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() {
@@ -58,6 +58,6 @@ func ParseReplaySessionID(filename string) (string, bool) {
 	return sid, true
 }
 
-func isGzipFile(src string) bool {
+func IsGzipFile(src string) bool {
 	return strings.HasSuffix(src, model.SuffixGz)
 }

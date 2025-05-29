@@ -40,7 +40,7 @@ func ScanRemainReplays(apiClient *JMService, replayDir string) map[string]model.
 			Version:     version,
 			TargetDate:  targetDate,
 			AbsFilePath: path,
-			IsGzip:      isGzipFile(filename),
+			IsGzip:      IsGzipFile(filename),
 		}
 		return nil
 	})

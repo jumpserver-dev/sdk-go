@@ -13,6 +13,7 @@ type User struct {
 	IsValid  bool   `json:"is_valid"`
 	IsActive bool   `json:"is_active"`
 	OTPLevel int    `json:"otp_level"`
+	Language string `json:"lang"`
 }
 
 type MiniUser struct {

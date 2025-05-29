@@ -20,6 +20,7 @@ type TerminalConfig struct {
 	GptApiKey           string                 `json:"GPT_API_KEY"`
 	GptProxy            string                 `json:"GPT_PROXY"`
 	GptModel            string                 `json:"GPT_MODEL"`
+	ChatAIType          string                 `json:"CHAT_AI_TYPE"`
 
 	LicenseContent string `json:"XPACK_LICENSE_CONTENT"`
 	LicenseIsValid bool   `json:"XPACK_LICENSE_IS_VALID"`

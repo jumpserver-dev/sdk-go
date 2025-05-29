@@ -61,6 +61,7 @@ type Session struct {
 	ErrReason  LabelField     `json:"error_reason,omitempty"`
 	TokenId    string         `json:"token_id,omitempty"`
 	Comment    string         `json:"comment,omitempty"`
+	LangCode   string         `json:"lang_code,omitempty"`
 }
 
 type ReplayVersion string

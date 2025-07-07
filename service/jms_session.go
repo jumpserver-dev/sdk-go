@@ -25,6 +25,14 @@ func (s *JMService) FinishReply(sid string) (model.Session, error) {
 	return s.sessionPatch(sid, data)
 }
 
+func (s *JMService) FinishReplyWithSize(sid string, size int64) (model.Session, error) {
+	data := map[string]interface{}{
+		"has_replay":  true,
+		"replay_size": size,
+	}
+	return s.sessionPatch(sid, data)
+}
+
 func (s *JMService) CreateSession(sess model.Session) (ret model.Session, err error) {
 	_, err = s.authClient.Post(SessionListURL, sess, &ret)
 	return

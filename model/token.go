@@ -82,6 +82,7 @@ type ConnectOptions struct {
 	Charset          *string `json:"charset,omitempty"`
 	DisableAutoHash  *bool   `json:"disableautohash,omitempty"`
 	BackspaceAsCtrlH *bool   `json:"backspaceAsCtrlH,omitempty"`
+	Resolution       string  `json:"resolution"`
 
 	FilenameConflictResolution string `json:"file_name_conflict_resolution,omitempty"`
 	TerminalThemeName          string `json:"terminal_theme_name,omitempty"`

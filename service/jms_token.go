@@ -77,3 +77,16 @@ func (s *JMService) CheckTokenStatus(tokenId string) (res model.TokenCheckStatus
 	_, err = s.authClient.Get(reqURL, &res)
 	return
 }
+
+func (s *JMService) RenewalToken(token string) (resp TokenRenewalResponse, err error) {
+	data := map[string]string{
+		"id": token,
+	}
+	_, err = s.authClient.Patch(SuperTokenRenewalURL, data, &resp)
+	return
+}
+
+type TokenRenewalResponse struct {
+	Ok  bool   `json:"ok"`
+	Msg string `json:"msg"`
+}

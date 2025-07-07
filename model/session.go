@@ -44,6 +44,12 @@ const (
 	LoginFromRT  LabelField = "RT"
 )
 
+const (
+	LoginFromWT LabelField = "WT"
+	LoginFromST LabelField = "ST"
+	LoginFromDT LabelField = "DT"
+)
+
 type Session struct {
 	ID         string         `json:"id,omitempty"`
 	User       string         `json:"user"`

@@ -69,6 +69,9 @@ const (
 )
 
 const (
+	DBListenPortsURL = "/api/v1/terminal/db-listen-ports/"
+	DBPortInfoURL    = "/api/v1/terminal/db-listen-ports/db-info/"
+
 	SuperConnectTokenSecretURL = "/api/v1/authentication/super-connection-token/secret/"
 	SuperConnectTokenInfoURL   = "/api/v1/authentication/super-connection-token/"
 
@@ -91,8 +94,11 @@ const (
 	SuperConnectTokenVirtualAppOptionURL    = "/api/v1/authentication/super-connection-token/virtual-app-option/"
 
 	SuperConnectTokenCheckURL = "/api/v1/authentication/super-connection-token/%s/check/"
+	SuperTokenRenewalURL      = "/api/v1/authentication/super-connection-token/renewal/"
 )
 
 const (
+	FaceRecognitionURL    = "/api/v1/authentication/face/callback/"
+	FaceMonitorURL        = "/api/v1/authentication/face-monitor/callback/"
 	FaceMonitorContextUrl = "/api/v1/authentication/face-monitor/context/"
 )

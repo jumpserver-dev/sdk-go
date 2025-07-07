@@ -42,6 +42,8 @@ type TerminalTask struct {
 	Args       string     `json:"args"`
 	Kwargs     TaskKwargs `json:"kwargs"`
 	IsFinished bool
+
+	TokenStatus TokenCheckStatus `json:"-"`
 }
 
 const (
@@ -85,4 +87,16 @@ type ReplayConfig struct {
 	AccountKey     string `json:"ACCOUNT_KEY,omitempty"`
 	EndpointSuffix string `json:"ENDPOINT_SUFFIX,omitempty"`
 	ContainerName  string `json:"CONTAINER_NAME,omitempty"`
+}
+
+type CommandConfig struct {
+	TypeName string     `json:"TYPE"`
+	Other    *OtherMeta `json:"OTHER,omitempty"`
+	Index    string     `json:"INDEX,omitempty"`
+	Hosts    []string   `json:"HOSTS,omitempty"`
+	DocType  string     `json:"DOC_TYPE,omitempty"`
+}
+
+type OtherMeta struct {
+	IgnoreVerifyCerts bool `json:"IGNORE_VERIFY_CERTS,omitempty"`
 }

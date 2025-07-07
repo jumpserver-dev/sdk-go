@@ -1,6 +1,9 @@
 package model
 
-import "strings"
+import (
+	"encoding/json"
+	"strings"
+)
 
 type Platform struct {
 	BaseOs   string                 `json:"base"`
@@ -24,7 +27,8 @@ type PlatformProtocols []PlatformProtocol
 func (p PlatformProtocols) GetSftpPath(protocol string) string {
 	for i := range p {
 		if strings.EqualFold(p[i].Name, protocol) {
-			return p[i].Setting.SftpHome
+			setting := p[i].GetSetting()
+			return setting.SftpHome
 		}
 	}
 	return "/tmp"
@@ -51,7 +55,15 @@ func (p *Platform) GetProtocolSetting(protocol string) (PlatformProtocol, bool) 
 
 type PlatformProtocol struct {
 	Protocol
-	Setting ProtocolSetting `json:"setting"`
+	Setting map[string]any `json:"setting"` // 参考 ProtocolSetting 里的字段
+}
+
+func (p PlatformProtocol) GetSetting() ProtocolSetting {
+	// 将 map[string]any 转换为 ProtocolSetting
+	jsonData, _ := json.Marshal(p.Setting)
+	var setting ProtocolSetting
+	json.Unmarshal(jsonData, &setting)
+	return setting
 }
 
 type ProtocolSetting struct {

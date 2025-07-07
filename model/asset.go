@@ -25,6 +25,7 @@ type SpecInfo struct {
 	UsernameSelector string `json:"username_selector"`
 	PasswordSelector string `json:"password_selector"`
 	SubmitSelector   string `json:"submit_selector"`
+	HttpProxy        string `json:"proxy"`
 }
 
 type Asset struct {
@@ -44,6 +45,8 @@ type Asset struct {
 	IsActive bool   `json:"is_active"` // 判断资产是否禁用
 
 	Accounts Actions `json:"accounts,omitempty"` // 只有 detail api才会有这个字段
+
+	Gateway *Gateway `json:"gateway,omitempty"`
 }
 
 type BaseDomain struct {

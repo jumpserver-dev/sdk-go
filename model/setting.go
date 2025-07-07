@@ -21,6 +21,9 @@ type PublicSetting struct {
 		DateStart common.UTCTime `json:"DATE_START"`
 		DateEnd   common.UTCTime `json:"DATE_END"`
 	} `json:"ANNOUNCEMENT"`
+
+	XpackEnabled bool `json:"XPACK_ENABLED"`
+	ValidLicense bool `json:"XPACK_LICENSE_IS_VALID"`
 }
 
 /*

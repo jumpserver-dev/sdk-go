@@ -88,6 +88,10 @@ type ProtocolSetting struct {
 	// for mongodb
 	AuthSource     string `json:"auth_source"`
 	ConnectionOpts string `json:"connection_options"`
+
+	// for sqlserver
+	Version string `json:"version"` // choice ('>=2014', '< 2014')
+	Encrypt bool   `json:"encrypt"` // for sqlserver 2008
 }
 
 type Protocol struct {

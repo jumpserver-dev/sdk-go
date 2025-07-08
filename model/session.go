@@ -42,12 +42,7 @@ const (
 	LoginFromSSH LabelField = "ST"
 	LoginFromWeb LabelField = "WT"
 	LoginFromRT  LabelField = "RT"
-)
-
-const (
-	LoginFromWT LabelField = "WT"
-	LoginFromST LabelField = "ST"
-	LoginFromDT LabelField = "DT"
+	LoginFromDT  LabelField = "DT"
 )
 
 type Session struct {

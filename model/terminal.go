@@ -104,4 +104,5 @@ type CommandConfig struct {
 
 type OtherMeta struct {
 	IgnoreVerifyCerts bool `json:"IGNORE_VERIFY_CERTS,omitempty"`
+	IsIndexDatastream bool `json:"IS_INDEX_DATASTREAM,omitempty"`
 }

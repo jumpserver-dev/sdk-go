@@ -139,8 +139,8 @@ func NewFTPFileStorage(jmsService *service.JMService, cfg model.ReplayConfig) FT
 
 func NewCommandStorage(jmsService *service.JMService, conf *model.TerminalConfig) CommandStorage {
 	cf := conf.CommandStorage
-	tp, ok := cf["TYPE"]
-	if !ok {
+	tp := cf.TypeName
+	if tp == "" {
 		tp = "server"
 	}
 	/*
@@ -154,17 +154,12 @@ func NewCommandStorage(jmsService *service.JMService, conf *model.TerminalConfig
 	*/
 	switch tp {
 	case "es", "elasticsearch":
-		var hosts = make([]string, len(cf["HOSTS"].([]interface{})))
-		for i, item := range cf["HOSTS"].([]interface{}) {
-			hosts[i] = item.(string)
-		}
+		hosts := cf.Hosts
 		var skipVerify bool
-		index := cf["INDEX"].(string)
-		docType := cf["DOC_TYPE"].(string)
-		if otherMap, ok := cf["OTHER"].(map[string]interface{}); ok {
-			if insecureSkipVerify, ok := otherMap["IGNORE_VERIFY_CERTS"]; ok {
-				skipVerify = insecureSkipVerify.(bool)
-			}
+		index := cf.Index
+		docType := cf.DocType
+		if cf.Other != nil {
+			skipVerify = cf.Other.IgnoreVerifyCerts
 		}
 		if index == "" {
 			index = "jumpserver"
@@ -185,18 +180,11 @@ func NewCommandStorage(jmsService *service.JMService, conf *model.TerminalConfig
 			bucket      string
 			measurement string
 		)
-		if sURL, ok1 := cf["SERVER_URL"].(string); ok1 {
-			serverURL = sURL
-		}
-		if token, ok1 := cf["AUTH_TOKEN"].(string); ok1 {
-			authToken = token
-		}
-		if bucketValue, ok1 := cf["BUCKET"].(string); ok1 {
-			bucket = bucketValue
-		}
-		if measurementValue, ok1 := cf["MEASUREMENT"].(string); ok1 {
-			measurement = measurementValue
-		}
+
+		serverURL = cf.ServerURL
+		authToken = cf.AuthToken
+		bucket = cf.Bucket
+		measurement = cf.Measurement
 		if bucket == "" {
 			bucket = "jumpserver"
 		}

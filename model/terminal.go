@@ -1,26 +1,26 @@
 package model
 
 type TerminalConfig struct {
-	AssetListPageSize   string                 `json:"TERMINAL_ASSET_LIST_PAGE_SIZE"`
-	AssetListSortBy     string                 `json:"TERMINAL_ASSET_LIST_SORT_BY"`
-	HeaderTitle         string                 `json:"TERMINAL_HEADER_TITLE"`
-	PasswordAuth        bool                   `json:"TERMINAL_PASSWORD_AUTH"`
-	PublicKeyAuth       bool                   `json:"TERMINAL_PUBLIC_KEY_AUTH"`
-	ReplayStorage       ReplayConfig           `json:"TERMINAL_REPLAY_STORAGE"`
-	CommandStorage      map[string]interface{} `json:"TERMINAL_COMMAND_STORAGE"`
-	SessionKeepDuration int                    `json:"TERMINAL_SESSION_KEEP_DURATION"`
-	TelnetRegex         string                 `json:"TERMINAL_TELNET_REGEX"`
-	MaxIdleTime         int                    `json:"SECURITY_MAX_IDLE_TIME"`
-	MaxSessionTime      int                    `json:"SECURITY_MAX_SESSION_TIME"`
-	HeartbeatDuration   int                    `json:"TERMINAL_HEARTBEAT_INTERVAL"`
-	HostKey             string                 `json:"TERMINAL_HOST_KEY"`
-	EnableSessionShare  bool                   `json:"SECURITY_SESSION_SHARE"`
-	MaxStoreFTPFileSize int                    `json:"FTP_FILE_MAX_STORE"`
-	GptBaseUrl          string                 `json:"GPT_BASE_URL"`
-	GptApiKey           string                 `json:"GPT_API_KEY"`
-	GptProxy            string                 `json:"GPT_PROXY"`
-	GptModel            string                 `json:"GPT_MODEL"`
-	ChatAIType          string                 `json:"CHAT_AI_TYPE"`
+	AssetListPageSize   string        `json:"TERMINAL_ASSET_LIST_PAGE_SIZE"`
+	AssetListSortBy     string        `json:"TERMINAL_ASSET_LIST_SORT_BY"`
+	HeaderTitle         string        `json:"TERMINAL_HEADER_TITLE"`
+	PasswordAuth        bool          `json:"TERMINAL_PASSWORD_AUTH"`
+	PublicKeyAuth       bool          `json:"TERMINAL_PUBLIC_KEY_AUTH"`
+	ReplayStorage       ReplayConfig  `json:"TERMINAL_REPLAY_STORAGE"`
+	CommandStorage      CommandConfig `json:"TERMINAL_COMMAND_STORAGE"`
+	SessionKeepDuration int           `json:"TERMINAL_SESSION_KEEP_DURATION"`
+	TelnetRegex         string        `json:"TERMINAL_TELNET_REGEX"`
+	MaxIdleTime         int           `json:"SECURITY_MAX_IDLE_TIME"`
+	MaxSessionTime      int           `json:"SECURITY_MAX_SESSION_TIME"`
+	HeartbeatDuration   int           `json:"TERMINAL_HEARTBEAT_INTERVAL"`
+	HostKey             string        `json:"TERMINAL_HOST_KEY"`
+	EnableSessionShare  bool          `json:"SECURITY_SESSION_SHARE"`
+	MaxStoreFTPFileSize int           `json:"FTP_FILE_MAX_STORE"`
+	GptBaseUrl          string        `json:"GPT_BASE_URL"`
+	GptApiKey           string        `json:"GPT_API_KEY"`
+	GptProxy            string        `json:"GPT_PROXY"`
+	GptModel            string        `json:"GPT_MODEL"`
+	ChatAIType          string        `json:"CHAT_AI_TYPE"`
 
 	LicenseContent string `json:"XPACK_LICENSE_CONTENT"`
 	LicenseIsValid bool   `json:"XPACK_LICENSE_IS_VALID"`
@@ -95,6 +95,11 @@ type CommandConfig struct {
 	Index    string     `json:"INDEX,omitempty"`
 	Hosts    []string   `json:"HOSTS,omitempty"`
 	DocType  string     `json:"DOC_TYPE,omitempty"`
+
+	ServerURL   string `json:"SERVER_URL,omitempty"`
+	AuthToken   string `json:"AUTH_TOKEN,omitempty"`
+	Bucket      string `json:"BUCKET,omitempty"`
+	Measurement string `json:"MEASUREMENT,omitempty"`
 }
 
 type OtherMeta struct {

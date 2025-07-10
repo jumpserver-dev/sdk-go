@@ -43,6 +43,7 @@ const (
 	LoginFromWeb LabelField = "WT"
 	LoginFromRT  LabelField = "RT"
 	LoginFromDT  LabelField = "DT"
+	LoginFromVT  LabelField = "VT"
 )
 
 type Session struct {

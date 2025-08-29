@@ -22,12 +22,24 @@ func (s *JMService) GetUserPermAssetDetailById(userId, assetId string) (resp mod
 }
 
 func (s *JMService) GetAllUserPermsAssets(userId string) ([]model.PermAsset, error) {
-	var params model.PaginationParam
+	var params = model.PaginationParam{
+		PageSize: 100,
+		Offset:   0,
+	}
+	assets := make([]model.PermAsset, 0, 100)
 	res, err := s.GetUserPermsAssets(userId, params)
 	if err != nil {
 		return nil, err
 	}
-	return res.Data, nil
+	assets = append(assets, res.Data...)
+	for res.NextURL != "" {
+		res, err = s.GetNextURLPermAssets(res.NextURL)
+		if err != nil {
+			return nil, err
+		}
+		assets = append(assets, res.Data...)
+	}
+	return assets, nil
 }
 
 func (s *JMService) GetUserPermsAssets(userId string, params model.PaginationParam) (resp model.PaginationResponse, err error) {
@@ -36,13 +48,25 @@ func (s *JMService) GetUserPermsAssets(userId string, params model.PaginationPar
 }
 
 func (s *JMService) RefreshUserAllPermsAssets(userId string) ([]model.PermAsset, error) {
-	var params model.PaginationParam
-	params.Refresh = true
+	var params = model.PaginationParam{
+		PageSize: 100,
+		Offset:   0,
+		Refresh:  true,
+	}
+	assets := make([]model.PermAsset, 0, 100)
 	res, err := s.GetUserPermsAssets(userId, params)
 	if err != nil {
 		return nil, err
 	}
-	return res.Data, nil
+	assets = append(assets, res.Data...)
+	for res.NextURL != "" {
+		res, err = s.GetNextURLPermAssets(res.NextURL)
+		if err != nil {
+			return nil, err
+		}
+		assets = append(assets, res.Data...)
+	}
+	return assets, nil
 }
 
 func (s *JMService) GetUserAssetByID(userId, assetId string) (assets []model.PermAsset, err error) {
@@ -73,8 +97,8 @@ func (s *JMService) GetUserPermAssetById(userId, assetId string) (assets []model
 }
 
 func (s *JMService) getPaginationAssets(reqUrl string, param model.PaginationParam) (resp model.PaginationResponse, err error) {
-	if param.PageSize < 0 {
-		param.PageSize = 0
+	if param.PageSize <= 0 {
+		param.PageSize = 100
 	}
 	searches := make([]string, 0, len(param.Searches))
 	for i := 0; i < len(param.Searches); i++ {
@@ -117,5 +141,10 @@ func (s *JMService) getPaginationAssets(reqUrl string, param model.PaginationPar
 		resp.Data = data
 		resp.Total = len(data)
 	}
+	return
+}
+
+func (s *JMService) GetNextURLPermAssets(reqUrl string) (resp model.PaginationResponse, err error) {
+	_, err = s.authClient.Get(reqUrl, &resp)
 	return
 }

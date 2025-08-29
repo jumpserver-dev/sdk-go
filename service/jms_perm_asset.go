@@ -10,8 +10,22 @@ import (
 
 func (s *JMService) SearchPermAsset(userId, key string) (res model.PermAssetList, err error) {
 	reqUrl := fmt.Sprintf(UserPermsAssetsURL, userId)
-	payload := map[string]string{"search": key}
-	_, err = s.authClient.Get(reqUrl, &res, payload)
+	payload := map[string]string{"search": key, "limit": "100"}
+	var ret model.PaginationResponse
+	assets := make([]model.PermAsset, 0, 100)
+	_, err = s.authClient.Get(reqUrl, &ret, payload)
+	if err != nil {
+		return
+	}
+	assets = append(assets, ret.Data...)
+	for ret.NextURL != "" {
+		ret, err = s.GetNextURLPermAssets(ret.NextURL)
+		if err != nil {
+			return
+		}
+		assets = append(assets, ret.Data...)
+	}
+	res = model.PermAssetList(assets)
 	return
 }
 

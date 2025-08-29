@@ -103,10 +103,24 @@ func (s *JMService) GetUserPermAssetsByIP(userId, assetIP string) (assets []mode
 
 func (s *JMService) GetUserPermAssetById(userId, assetId string) (assets []model.PermAsset, err error) {
 	params := map[string]string{
-		"id": assetId,
+		"id":    assetId,
+		"limit": "100",
 	}
+	var ret model.PaginationResponse
+	assets = make([]model.PermAsset, 0, 100)
 	reqUrl := fmt.Sprintf(UserPermsAssetsURL, userId)
-	_, err = s.authClient.Get(reqUrl, &assets, params)
+	_, err = s.authClient.Get(reqUrl, &ret, params)
+	if err != nil {
+		return
+	}
+	assets = append(assets, ret.Data...)
+	for ret.NextURL != "" {
+		ret, err = s.GetNextURLPermAssets(ret.NextURL)
+		if err != nil {
+			return
+		}
+		assets = append(assets, ret.Data...)
+	}
 	return
 }
 

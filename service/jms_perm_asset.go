@@ -83,28 +83,26 @@ func (s *JMService) RefreshUserAllPermsAssets(userId string) ([]model.PermAsset,
 	return assets, nil
 }
 
-func (s *JMService) GetUserAssetByID(userId, assetId string) (assets []model.PermAsset, err error) {
-	params := map[string]string{
-		"id": assetId,
-	}
-	reqUrl := fmt.Sprintf(UserPermsAssetsURL, userId)
-	_, err = s.authClient.Get(reqUrl, &assets, params)
-	return
-}
-
 func (s *JMService) GetUserPermAssetsByIP(userId, assetIP string) (assets []model.PermAsset, err error) {
 	params := map[string]string{
 		"address": assetIP,
 	}
-	reqUrl := fmt.Sprintf(UserPermsAssetsURL, userId)
-	_, err = s.authClient.Get(reqUrl, &assets, params)
-	return
+	return s.SearchUserPermAssets(userId, params)
 }
 
-func (s *JMService) GetUserPermAssetById(userId, assetId string) (assets []model.PermAsset, err error) {
+func (s *JMService) GetUserPermAssetsById(userId, assetId string) (assets []model.PermAsset, err error) {
 	params := map[string]string{
-		"id":    assetId,
+		"id": assetId,
+	}
+	return s.SearchUserPermAssets(userId, params)
+}
+
+func (s *JMService) SearchUserPermAssets(userId string, searchParams map[string]string) (assets []model.PermAsset, err error) {
+	params := map[string]string{
 		"limit": "100",
+	}
+	for k, v := range searchParams {
+		params[k] = v
 	}
 	var ret model.PaginationResponse
 	assets = make([]model.PermAsset, 0, 100)

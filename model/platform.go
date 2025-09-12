@@ -44,7 +44,7 @@ func (p Platform) GetProtocol(protocol string) PlatformProtocol {
 	return PlatformProtocol{}
 }
 
-func (p *Platform) GetProtocolSetting(protocol string) (PlatformProtocol, bool) {
+func (p Platform) GetProtocolSetting(protocol string) (PlatformProtocol, bool) {
 	for i := range p.Protocols {
 		if p.Protocols[i].Name == protocol {
 			return p.Protocols[i], true
@@ -92,6 +92,8 @@ type ProtocolSetting struct {
 	// for sqlserver
 	Version string `json:"version"` // choice ('>=2014', '< 2014')
 	Encrypt bool   `json:"encrypt"` // for sqlserver 2008
+
+	EnableClusterMode bool `json:"enable_cluster_mode"` // for redis-cli
 }
 
 type Protocol struct {

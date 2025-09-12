@@ -16,7 +16,26 @@ func (s *JMService) GetShareUserInfo(query string) (res []*model.MiniUser, err e
 	params := make(map[string]string)
 	params["action"] = "suggestion"
 	params["search"] = query
-	_, err = s.authClient.Get(UserListURL, &res, params)
+	params["limit"] = "100"
+	var paginationRes PaginationResult[*model.MiniUser]
+	_, err = s.authClient.Get(UserListURL, &paginationRes, params)
+	if err != nil {
+		return
+	}
+	res = make([]*model.MiniUser, 0, 50)
+	res = append(res, paginationRes.Results...)
+	for paginationRes.Next != "" {
+		paginationRes, err = s.GetPaginationUserInfo(paginationRes.Next)
+		if err != nil {
+			return
+		}
+		res = append(res, paginationRes.Results...)
+	}
+	return
+}
+
+func (s *JMService) GetPaginationUserInfo(reqUrl string) (res PaginationResult[*model.MiniUser], err error) {
+	_, err = s.authClient.Get(reqUrl, &res)
 	return
 }
 
@@ -62,4 +81,11 @@ func (s *JMService) SyncUserKokoPreference(cookies map[string]string, data model
 	}
 	_, err = client.Patch(UserKoKoPreferenceURL, data, nil)
 	return
+}
+
+type PaginationResult[T any] struct {
+	Count    int    `json:"count"`
+	Results  []T    `json:"results"`
+	Previous string `json:"previous"`
+	Next     string `json:"next"`
 }

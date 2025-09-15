@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -171,6 +172,24 @@ func (s *JMService) getPaginationAssets(reqUrl string, param model.PaginationPar
 }
 
 func (s *JMService) GetNextURLPermAssets(reqUrl string) (resp model.PaginationResponse, err error) {
-	_, err = s.authClient.Get(reqUrl, &resp)
+	result := TrimHost(reqUrl)
+	_, err = s.authClient.Get(result, &resp)
 	return
+}
+
+func TrimHost(raw string) string {
+	s := strings.TrimSpace(raw)
+	if strings.HasPrefix(s, "http://") || strings.HasPrefix(s, "https://") {
+		u, err := url.Parse(s)
+		if err != nil {
+			return raw // 解析失败就原样返回
+		}
+		path := u.Path
+		result := path
+		if u.RawQuery != "" {
+			result += "?" + u.RawQuery
+		}
+		return result
+	}
+	return raw
 }

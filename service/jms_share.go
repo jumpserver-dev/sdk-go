@@ -24,8 +24,8 @@ func (s *JMService) GetShareUserInfo(query string) (res []*model.MiniUser, err e
 	}
 	res = make([]*model.MiniUser, 0, 50)
 	res = append(res, paginationRes.Results...)
-	for paginationRes.Next != "" {
-		paginationRes, err = s.GetPaginationUserInfo(paginationRes.Next)
+	for paginationRes.NextURL != "" {
+		paginationRes, err = s.GetNextPaginationUserInfo(paginationRes.NextURL)
 		if err != nil {
 			return
 		}
@@ -34,8 +34,9 @@ func (s *JMService) GetShareUserInfo(query string) (res []*model.MiniUser, err e
 	return
 }
 
-func (s *JMService) GetPaginationUserInfo(reqUrl string) (res PaginationResult[*model.MiniUser], err error) {
-	_, err = s.authClient.Get(reqUrl, &res)
+func (s *JMService) GetNextPaginationUserInfo(reqUrl string) (res PaginationResult[*model.MiniUser], err error) {
+	result := TrimHost(reqUrl)
+	_, err = s.authClient.Get(result, &res)
 	return
 }
 
@@ -87,5 +88,5 @@ type PaginationResult[T any] struct {
 	Count    int    `json:"count"`
 	Results  []T    `json:"results"`
 	Previous string `json:"previous"`
-	Next     string `json:"next"`
+	NextURL  string `json:"next"`
 }

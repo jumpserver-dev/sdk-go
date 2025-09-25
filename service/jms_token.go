@@ -90,3 +90,11 @@ type TokenRenewalResponse struct {
 	Ok  bool   `json:"ok"`
 	Msg string `json:"msg"`
 }
+
+func (s *JMService) GetAccountsChat() (resp model.AccountChat, err error) {
+	/*
+		for AI Chat Account
+	*/
+	_, err = s.authClient.Get(AccountsChatURL, &resp)
+	return
+}

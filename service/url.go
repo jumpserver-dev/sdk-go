@@ -102,3 +102,7 @@ const (
 	FaceMonitorURL        = "/api/v1/authentication/face-monitor/callback/"
 	FaceMonitorContextUrl = "/api/v1/authentication/face-monitor/context/"
 )
+
+const (
+	AccountsChatURL = "/api/v1/accounts/accounts/chat/"
+)

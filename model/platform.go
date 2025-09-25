@@ -62,7 +62,7 @@ func (p PlatformProtocol) GetSetting() ProtocolSetting {
 	// 将 map[string]any 转换为 ProtocolSetting
 	jsonData, _ := json.Marshal(p.Setting)
 	var setting ProtocolSetting
-	json.Unmarshal(jsonData, &setting)
+	_ = json.Unmarshal(jsonData, &setting)
 	return setting
 }
 

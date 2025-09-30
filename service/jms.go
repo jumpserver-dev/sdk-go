@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 
@@ -156,3 +157,9 @@ func (s *JMService) GetWsClient() (*websocket.Conn, error) {
 const (
 	wsURL = "ws/terminal-task/"
 )
+
+func (s *JMService) Call(method, reqUrl string, data, res interface{},
+	params ...map[string]string) (resp *http.Response, err error) {
+	method = strings.ToUpper(method)
+	return s.authClient.Do(method, reqUrl, data, res, params...)
+}

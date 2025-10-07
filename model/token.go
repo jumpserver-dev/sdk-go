@@ -24,7 +24,9 @@ type ConnectToken struct {
 	ConnectOptions ConnectOptions `json:"connect_options"`
 
 	CommandFilterACLs []CommandACL `json:"command_filter_acls"`
-
+	
+	DataMaskingRules []DataMaskingRule `json:"data_masking_rules"`
+	
 	Ticket           *ObjectId   `json:"from_ticket,omitempty"`
 	TicketInfo       interface{} `json:"from_ticket_info,omitempty"`
 	FaceMonitorToken string      `json:"face_monitor_token,omitempty"`

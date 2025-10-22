@@ -34,6 +34,27 @@ func (s *JMService) GetShareUserInfo(query string) (res []*model.MiniUser, err e
 	return
 }
 
+func (s *JMService) GetSuggestionUsers(query string) (res []*model.MiniUser, err error) {
+	params := make(map[string]string)
+	params["search"] = query
+	params["limit"] = "10"
+	var paginationRes PaginationResult[*model.MiniUser]
+	_, err = s.authClient.Get(UserSuggestionsURL, &paginationRes, params)
+	if err != nil {
+		return
+	}
+	res = make([]*model.MiniUser, 0, 50)
+	res = append(res, paginationRes.Results...)
+	for paginationRes.NextURL != "" {
+		paginationRes, err = s.GetNextPaginationUserInfo(paginationRes.NextURL)
+		if err != nil {
+			return
+		}
+		res = append(res, paginationRes.Results...)
+	}
+	return
+}
+
 func (s *JMService) GetNextPaginationUserInfo(reqUrl string) (res PaginationResult[*model.MiniUser], err error) {
 	result := TrimHost(reqUrl)
 	_, err = s.authClient.Get(result, &res)

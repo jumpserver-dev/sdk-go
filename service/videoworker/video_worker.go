@@ -46,16 +46,6 @@ type WorkClient struct {
 	cacheToken map[string]interface{}
 }
 
-func (s *WorkClient) Login() error {
-	var res map[string]interface{}
-	_, err := s.client.Get(LoginURL, &res)
-	if err != nil {
-		return err
-	}
-	s.cacheToken = res
-	return nil
-}
-
 func (w *WorkClient) CreateReplaySessionTask(sessionId, replayDirPath string, taskConfig *TaskConfig) (string, error) {
 	// 读取 replay json
 	replayMetaFilePath := path.Join(replayDirPath, fmt.Sprintf("%s.replay.json", sessionId))
@@ -151,7 +141,6 @@ func FileSHA256(path string) (string, error) {
 }
 
 const (
-	LoginURL        = "/api/v1/users/profile/"
 	ReplayFileURL   = "/api/v2/replay/sessions/%s/task/"
 	ReplayUploadURL = "/api/v2/replay/sessions/%s/task/upload/%d"
 )

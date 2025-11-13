@@ -5,27 +5,36 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/jumpserver-dev/sdk-go/httplib"
-	"github.com/jumpserver-dev/sdk-go/model"
 	"io"
 	"os"
 	"path"
 	"path/filepath"
 	"time"
+
+	"github.com/jumpserver-dev/sdk-go/httplib"
+	"github.com/jumpserver-dev/sdk-go/model"
 )
 
-func NewClient(baseUrl string, key model.AccessKey) *WorkClient {
-	client, err := httplib.NewClient(baseUrl,
-		30*time.Second, httplib.WithInsecure())
+const (
+	orgHeaderKey   = "X-JMS-ORG"
+	orgHeaderValue = "ROOT"
+)
+
+func NewClient(baseUrl string, key model.AccessKey, Insecure bool) *WorkClient {
+	opts := make([]httplib.Opt, 0, 2)
+	if Insecure {
+		opts = append(opts, httplib.WithInsecure())
+	}
+	client, err := httplib.NewClient(baseUrl, 30*time.Second, opts...)
 	if err != nil {
 		return nil
 	}
-	sign := httplib.SigAuth{
+	sign := ProfileAuth{
 		KeyID:    key.ID,
 		SecretID: key.Secret,
 	}
 	client.SetAuthSign(&sign)
-	client.SetHeader("X-JMS-ORG", "ROOT")
+	client.SetHeader(orgHeaderKey, orgHeaderValue)
 	return &WorkClient{BaseURL: baseUrl, client: client}
 }
 

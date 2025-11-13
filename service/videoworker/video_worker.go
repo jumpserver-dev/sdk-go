@@ -1,9 +1,14 @@
 package videoworker
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
-	"reflect"
-	"strconv"
+	"io"
+	"os"
+	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/jumpserver-dev/sdk-go/httplib"
@@ -15,7 +20,7 @@ const (
 	orgHeaderValue = "ROOT"
 )
 
-func NewClient(baseUrl string, key model.AccessKey, Insecure bool) *Client {
+func NewClient(baseUrl string, key model.AccessKey, Insecure bool) *WorkClient {
 	opts := make([]httplib.Opt, 0, 2)
 	if Insecure {
 		opts = append(opts, httplib.WithInsecure())
@@ -30,10 +35,10 @@ func NewClient(baseUrl string, key model.AccessKey, Insecure bool) *Client {
 	}
 	client.SetAuthSign(&sign)
 	client.SetHeader(orgHeaderKey, orgHeaderValue)
-	return &Client{BaseURL: baseUrl, client: client}
+	return &WorkClient{BaseURL: baseUrl, client: client}
 }
 
-type Client struct {
+type WorkClient struct {
 	BaseURL string
 	sign    httplib.AuthSign
 	client  *httplib.Client
@@ -41,77 +46,101 @@ type Client struct {
 	cacheToken map[string]interface{}
 }
 
-func (s *Client) CreateReplayTask(sessionId string, file string, meta ReplayMeta) (res Task, err error) {
-	fileReplayURL := fmt.Sprintf(ReplayFileURL, sessionId)
-	fieldsMap := StructToMapString(meta)
-	err = s.client.PostFileWithFields(fileReplayURL, file, fieldsMap, &res)
+func (w *WorkClient) CreateReplaySessionTask(sessionId, replayDirPath string, taskConfig *TaskConfig) (string, error) {
+	// 读取 replay json
+	replayMetaFilePath := path.Join(replayDirPath, fmt.Sprintf("%s.replay.json", sessionId))
+
+	f, err := os.Open(replayMetaFilePath)
 	if err != nil {
-		return res, err
+		return "", err
 	}
-	return res, nil
-}
+	defer f.Close()
 
-type ReplayMeta struct {
-	SessionId     string `json:"session_id"`
-	ComponentType string `json:"component_type"`
-	FileType      string `json:"file_type"`
-	SessionDate   string `json:"session_date"` //  格式是 "2006-01-02"
-	MaxFrame      int    `json:"max_frame"`
-	Width         int    `json:"width"`
-	Height        int    `json:"height"`
-	Bitrate       int    `json:"bitrate"` // 1 或者 2
-}
-
-const tagName = "json"
-
-// 任意 struct 的 json 标签转换为 map[string]string, 用于 post form, 如果非 struct 对象则返回 nil
-
-func StructToMapString(m interface{}) map[string]string {
-	if m == nil {
-		return nil
+	var replayMeta ReplayMeta
+	if err := json.NewDecoder(f).Decode(&replayMeta); err != nil {
+		return "", fmt.Errorf("error decoding replay meta file: %w", err)
 	}
-	out := make(map[string]string)
+	// 这里计算文件的checksum
+	for i, file := range replayMeta.Files {
+		replayPath := filepath.Join(replayDirPath, file.Name)
+		checksum, err := FileSHA256(replayPath)
+		if err != nil {
+			return "", fmt.Errorf("error calculating replay checksum: %w", err)
+		}
+		replayMeta.Files[i].Checksum = checksum
+	}
 
-	v := reflect.ValueOf(m)
-	if v.Kind() == reflect.Ptr {
-		v = v.Elem()
+	if taskConfig == nil {
+		taskConfig = &TaskConfig{}
 	}
-	if v.Kind() != reflect.Struct { // Non-structural return error
-		return nil
+	resp, err := w.CreateNewReplaySessionTask(sessionId, CreateReplayTaskRequest{
+		Config: *taskConfig,
+		Meta:   replayMeta,
+	})
+	if err != nil {
+		return "", fmt.Errorf("error creating replay session task: %w", err)
 	}
-	t := v.Type()
-	for i := 0; i < v.NumField(); i++ {
-		fi := t.Field(i)
-		if tagValue := fi.Tag.Get(tagName); tagValue != "" {
-			interValue := v.Field(i).Interface()
-			fieldValue := ""
-			switch interValue.(type) {
-			case string:
-				fieldValue = interValue.(string)
-			case int:
-				fieldValue = strconv.Itoa(interValue.(int))
-			case int32:
-				fieldValue = strconv.FormatInt(int64(interValue.(int32)), 10)
-			case int64:
-				fieldValue = strconv.FormatInt(interValue.(int64), 10)
-			case float64:
-				fieldValue = strconv.FormatFloat(interValue.(float64), 'f', -1, 64)
-			case bool:
-				fieldValue = strconv.FormatBool(interValue.(bool))
-			default:
-				fieldValue = fmt.Sprintf("%v", interValue)
-			}
-			// 如果值为空或者为0则不传递
-			if fieldValue == "" || fieldValue == "0" {
-				continue
-			}
-			out[tagValue] = fieldValue
+
+	taskId := resp.ID
+
+	for i := range replayMeta.Files {
+		fileMeta := replayMeta.Files[i]
+		filePath := path.Join(replayDirPath, fileMeta.Name)
+
+		resp, err := w.UploadReplayPart(taskId, i, filePath)
+		if err != nil {
+			return "", fmt.Errorf("error uploading replay part: %w", err)
+		}
+		if !resp.Ok {
+			return "", fmt.Errorf("error upload replay part: %s", resp.ErrorMessage)
 		}
 	}
-	return out
 
+	return taskId, nil
+}
+
+type CreateReplayTaskRequest struct {
+	Config TaskConfig `json:"config"`
+	Meta   ReplayMeta `json:"meta"`
+}
+
+type CreateReplayTaskResponse struct {
+	ID string `json:"id"`
+}
+
+func (w *WorkClient) CreateNewReplaySessionTask(sessionId string, req CreateReplayTaskRequest) (resp CreateReplayTaskResponse, err error) {
+	reqUrl := fmt.Sprintf(ReplayFileURL, sessionId)
+	_, err = w.client.Post(reqUrl, &req, &resp)
+	return
+}
+
+type UploadReplayPartResponse struct {
+	Ok           bool   `json:"ok"`
+	ErrorMessage string `json:"error_message"`
+}
+
+func (w *WorkClient) UploadReplayPart(sessionId string, index int, partFilePath string) (resp UploadReplayPartResponse, err error) {
+	reqUrl := fmt.Sprintf(ReplayUploadURL, sessionId, index)
+	err = w.client.PostFileWithFields(reqUrl, partFilePath, map[string]string{}, &resp)
+	return
+}
+
+func FileSHA256(path string) (string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	hasher := sha256.New()
+	if _, err := io.Copy(hasher, file); err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(hasher.Sum(nil)), nil
 }
 
 const (
-	ReplayFileURL = "/api/v2/replay/sessions/%s/task/"
+	ReplayFileURL   = "/api/v2/replay/sessions/%s/task/"
+	ReplayUploadURL = "/api/v2/replay/sessions/%s/task/upload/%d"
 )

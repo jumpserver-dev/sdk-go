@@ -115,6 +115,7 @@ const (
 	SessionReplayErrCreatedFailed ReplayError = "replay_create_failed"
 	SessionReplayErrUploadFailed  ReplayError = "replay_upload_failed"
 	SessionReplayErrUnsupported   ReplayError = "replay_unsupported"
+	SessionReplayErrConvertFailed ReplayError = "replay_convert_failed"
 )
 
 type LifecycleEvent string

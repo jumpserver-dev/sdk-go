@@ -77,22 +77,24 @@ const (
 )
 
 const (
-	SuffixGz         = ".gz"
-	SuffixReplayGz   = ".replay.gz"
-	SuffixCastGz     = ".cast.gz"
-	SuffixCast       = ".cast"
-	SuffixGuac       = ".guac"
-	SuffixPartReplay = ".part.gz"
-	SuffixReplayJson = ".replay.json"
-	SuffixReplayMP4  = ".replay.mp4"
+	SuffixGz            = ".gz"
+	SuffixReplayGz      = ".replay.gz"
+	SuffixCastGz        = ".cast.gz"
+	SuffixCast          = ".cast"
+	SuffixGuac          = ".guac"
+	SuffixPartReplay    = ".part.gz"
+	SuffixReplayJson    = ".replay.json"
+	SuffixReplayMP4     = ".replay.mp4"
+	SuffixReplayPartMp4 = ".part.mp4"
 )
 
 var SuffixVersionMap = map[string]ReplayVersion{
-	SuffixPartReplay: Version5,
-	SuffixReplayJson: Version5,
-	SuffixReplayGz:   Version2,
-	SuffixCastGz:     Version3,
-	SuffixReplayMP4:  Version4,
+	SuffixReplayPartMp4: Version5,
+	SuffixPartReplay:    Version5,
+	SuffixReplayJson:    Version5,
+	SuffixReplayGz:      Version2,
+	SuffixCastGz:        Version3,
+	SuffixReplayMP4:     Version4,
 }
 
 func ParseReplayVersion(gzFile string, defaultValue ReplayVersion) ReplayVersion {

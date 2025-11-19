@@ -14,12 +14,12 @@ type ReplayMeta struct {
 	LoginFrom  string     `json:"login_from"`
 	RemoteAddr string     `json:"remote_addr"`
 	Protocol   string     `json:"protocol"`
-	DateStart  string     `json:"data_start"`
 	OrgId      string     `json:"org_id"`
 	UserId     string     `json:"user_id"`
 	AssetId    string     `json:"asset_id"`
 	AccountId  string     `json:"account_id"`
-	DateEnd    string     `json:"data_end"`
+	DateStart  string     `json:"date_start"`
+	DateEnd    string     `json:"date_end"`
 	Type       string     `json:"type"`
 	Files      []FileMeta `json:"files"`
 }

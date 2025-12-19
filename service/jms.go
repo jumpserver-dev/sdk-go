@@ -1,6 +1,7 @@
 package service
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/http"
@@ -138,7 +139,14 @@ func (s *JMService) GetWsClient() (*websocket.Conn, error) {
 		}
 	}
 	header := req.Header
-	c, _, err := websocket.DefaultDialer.Dial(wsReqURL.String(), header)
+	dialer := &websocket.Dialer{
+		Proxy:            http.ProxyFromEnvironment,
+		HandshakeTimeout: 45 * time.Second,
+	}
+	if s.opt.Insecure {
+		dialer.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+	c, _, err := dialer.Dial(wsReqURL.String(), header)
 	if err != nil {
 		return nil, err
 	}

@@ -27,7 +27,7 @@ type User struct {
 	IsExpired   bool           `json:"is_expired"`
 	Groups      []Group        `json:"groups"`
 	DateExpired common.UTCTime `json:"date_expired"`
-	LastLogin   common.UTCTime `json:"last_login"`
+	LastLogin   *common.UTCTime `json:"last_login"`
 	Phone       Phone          `json:"phone"`
 }
 

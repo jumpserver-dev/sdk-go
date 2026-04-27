@@ -168,12 +168,20 @@ func (c *Client) parseUrl(reqUrl string, params []map[string]string) string {
 
 func (c *Client) newRequest(method, reqUrl string, data interface{}, params []map[string]string) (*http.Request, error) {
 	reqUrl = c.parseUrl(reqUrl, params)
-	dataRaw, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
+	var (
+		req *http.Request
+		err error
+	)
+	if data != nil {
+		dataRaw, err1 := json.Marshal(data)
+		if err1 != nil {
+			return nil, err1
+		}
+		reader := bytes.NewReader(dataRaw)
+		req, err = http.NewRequest(method, reqUrl, reader)
+	} else {
+		req, err = http.NewRequest(method, reqUrl, nil)
 	}
-	reader := bytes.NewReader(dataRaw)
-	req, err := http.NewRequest(method, reqUrl, reader)
 	if err != nil {
 		return req, err
 	}

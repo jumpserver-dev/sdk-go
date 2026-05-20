@@ -22,13 +22,13 @@ type User struct {
 	OrgRoles    []OrgRole    `json:"org_roles"`
 	SystemRoles []SystemRole `json:"system_roles"`
 
-	IsOrgAdmin  bool           `json:"is_org_admin"`
-	IsSuperuser bool           `json:"is_superuser"`
-	IsExpired   bool           `json:"is_expired"`
-	Groups      []Group        `json:"groups"`
-	DateExpired common.UTCTime `json:"date_expired"`
+	IsOrgAdmin  bool            `json:"is_org_admin"`
+	IsSuperuser bool            `json:"is_superuser"`
+	IsExpired   bool            `json:"is_expired"`
+	Groups      []Group         `json:"groups"`
+	DateExpired *common.UTCTime `json:"date_expired"`
 	LastLogin   *common.UTCTime `json:"last_login"`
-	Phone       Phone          `json:"phone"`
+	Phone       Phone           `json:"phone"`
 }
 
 type MiniUser struct {

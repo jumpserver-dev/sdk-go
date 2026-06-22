@@ -89,6 +89,20 @@ type ConnectOptions struct {
 	FilenameConflictResolution string `json:"file_name_conflict_resolution,omitempty"`
 	TerminalThemeName          string `json:"terminal_theme_name,omitempty"`
 	Language                   string `json:"lang,omitempty"`
+
+	ClipboardPolicy *ClipboardPolicy `json:"clipboard_policy,omitempty"`
+}
+
+// ClipboardPolicy controls fine-grained clipboard behaviour for graphical
+// sessions (RDP/VNC). A nil pointer means no policy was supplied and the
+// graphical proxy should fall back to its permissive default.
+type ClipboardPolicy struct {
+	FileUpload         bool `json:"file_upload"`
+	FileDownload       bool `json:"file_download"`
+	TextCopy           bool `json:"text_copy"`
+	TextPaste          bool `json:"text_paste"`
+	TextCopyMaxLength  int  `json:"text_copy_max_length"`
+	TextPasteMaxLength int  `json:"text_paste_max_length"`
 }
 
 type ConnectMethod struct {

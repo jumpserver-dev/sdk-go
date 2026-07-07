@@ -13,6 +13,7 @@ type ConnectToken struct {
 	Asset    Asset      `json:"asset"`
 	Protocol string     `json:"protocol"`
 	Domain   *Domain    `json:"domain"`
+	Zone     *Domain    `json:"zone"`
 	Gateway  *Gateway   `json:"gateway"`
 	ExpireAt ExpireInfo `json:"expire_at"`
 	OrgId    string     `json:"org_id"`
@@ -24,9 +25,10 @@ type ConnectToken struct {
 	ConnectOptions ConnectOptions `json:"connect_options"`
 
 	CommandFilterACLs []CommandACL `json:"command_filter_acls"`
-	
+
+	ClipboardPolicy  *ClipboardPolicy  `json:"clipboard_policy"`
 	DataMaskingRules []DataMaskingRule `json:"data_masking_rules"`
-	
+
 	Ticket           *ObjectId   `json:"from_ticket,omitempty"`
 	TicketInfo       interface{} `json:"from_ticket_info,omitempty"`
 	FaceMonitorToken string      `json:"face_monitor_token,omitempty"`
@@ -69,6 +71,20 @@ type ConnectTokenInfo struct {
 
 	Code   string `json:"code,omitempty"`
 	Detail string `json:"detail,omitempty"`
+}
+
+type ClipboardPolicy struct {
+	Copy  *ClipboardPolicyItem `json:"copy"`
+	Paste *ClipboardPolicyItem `json:"paste"`
+}
+
+type ClipboardPolicyItem struct {
+	Enabled       bool    `json:"enabled"`
+	Action        string  `json:"action"`
+	PermAllowed   bool    `json:"perm_allowed"`
+	ACLAction     *string `json:"acl_action"`
+	TextLimit     int     `json:"text_limit"`
+	FileSizeLimit int     `json:"file_size_limit"`
 }
 
 const (

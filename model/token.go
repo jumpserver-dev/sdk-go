@@ -29,13 +29,30 @@ type ConnectToken struct {
 	ClipboardPolicy  *ClipboardPolicy  `json:"clipboard_policy"`
 	DataMaskingRules []DataMaskingRule `json:"data_masking_rules"`
 
-	Ticket           *ObjectId   `json:"from_ticket,omitempty"`
-	TicketInfo       interface{} `json:"from_ticket_info,omitempty"`
-	FaceMonitorToken string      `json:"face_monitor_token,omitempty"`
+	Ticket           *ObjectId           `json:"from_ticket,omitempty"`
+	TicketInfo       interface{}         `json:"from_ticket_info,omitempty"`
+	FaceMonitorToken string              `json:"face_monitor_token,omitempty"`
+	SSHCertificate   *SSHCertificateInfo `json:"ssh_certificate,omitempty"`
 
 	Code   string `json:"code"`
 	Detail string `json:"detail"`
 	Error  string `json:"error"`
+}
+
+type SSHCertificateInfo struct {
+	SerialNumber         string `json:"serial_number"`
+	LeaseDuration        int    `json:"lease_duration"`
+	KeyID                string `json:"key_id"`
+	Principal            string `json:"principal"`
+	PublicKeyFingerprint string `json:"public_key_fingerprint"`
+}
+
+func (c *ConnectToken) ClearSSHCertificatePrivateKey() {
+	c.Account.ClearSSHCertificatePrivateKey()
+}
+
+func (c *ConnectToken) ClearSSHCertificateCredential() {
+	c.Account.ClearSSHCertificateCredential()
 }
 
 func (c *ConnectToken) CreateSession(addr string,

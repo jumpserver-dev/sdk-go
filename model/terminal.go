@@ -21,6 +21,7 @@ type TerminalConfig struct {
 	GptProxy            string        `json:"GPT_PROXY"`
 	GptModel            string        `json:"GPT_MODEL"`
 	ChatAIType          string        `json:"CHAT_AI_TYPE"`
+	PandaHost           string        `json:"PANDA_HOST"`
 
 	LicenseContent string `json:"XPACK_LICENSE_CONTENT"`
 	LicenseIsValid bool   `json:"XPACK_LICENSE_IS_VALID"`

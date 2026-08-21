@@ -100,6 +100,7 @@ type ConnectOptions struct {
 	Charset          *string `json:"charset,omitempty"`
 	DisableAutoHash  *bool   `json:"disableautohash,omitempty"`
 	BackspaceAsCtrlH *bool   `json:"backspaceAsCtrlH,omitempty"`
+	UseSysDBA        bool    `json:"use_sysdba,omitempty"`
 	Resolution       string  `json:"resolution"`
 
 	FilenameConflictResolution string `json:"file_name_conflict_resolution,omitempty"`

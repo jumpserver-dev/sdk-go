@@ -11,6 +11,10 @@ type BaseAccount struct {
 	Username   string     `json:"username"`
 	Secret     string     `json:"secret"`
 	SecretType LabelValue `json:"secret_type"`
+
+	// SSHCertificatePrivateKey is generated and populated by a component such
+	// as Koko. It is process-local and must never be serialized or logged.
+	SSHCertificatePrivateKey []byte `json:"-"`
 }
 
 func (a *BaseAccount) String() string {
@@ -24,6 +28,24 @@ func (a *BaseAccount) HashId() string {
 
 func (a *BaseAccount) IsSSHKey() bool {
 	return a.SecretType.Value == "ssh_key"
+}
+
+func (a *BaseAccount) IsSSHCertificate() bool {
+	return a.SecretType.Value == "ssh_certificate"
+}
+
+func (a *BaseAccount) ClearSSHCertificatePrivateKey() {
+	for i := range a.SSHCertificatePrivateKey {
+		a.SSHCertificatePrivateKey[i] = 0
+	}
+	a.SSHCertificatePrivateKey = nil
+}
+
+func (a *BaseAccount) ClearSSHCertificateCredential() {
+	a.ClearSSHCertificatePrivateKey()
+	if a.IsSSHCertificate() {
+		a.Secret = ""
+	}
 }
 
 // 如果是 null，表示这个账号是一个空用户名
@@ -68,6 +90,10 @@ type PermAccount struct {
 
 func (a *PermAccount) IsSSHKey() bool {
 	return a.SecretType == "ssh_key"
+}
+
+func (a *PermAccount) IsSSHCertificate() bool {
+	return a.SecretType == "ssh_certificate"
 }
 
 func (a *PermAccount) String() string {

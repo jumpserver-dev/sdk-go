@@ -8,9 +8,19 @@ import (
 )
 
 func (s *JMService) GetConnectTokenInfo(tokenId string, expireNow bool) (resp model.ConnectToken, err error) {
+	return s.GetConnectTokenInfoWithPublicKey(tokenId, expireNow, "")
+}
+
+// GetConnectTokenInfoWithPublicKey retrieves connection credentials and sends
+// an ephemeral SSH public key when the caller can use SSH certificates.
+func (s *JMService) GetConnectTokenInfoWithPublicKey(tokenId string, expireNow bool,
+	publicKey string) (resp model.ConnectToken, err error) {
 	data := map[string]interface{}{
 		"id":         tokenId,
 		"expire_now": expireNow,
+	}
+	if publicKey != "" {
+		data["public_key"] = publicKey
 	}
 	_, err = s.authClient.Post(SuperConnectTokenSecretURL, data, &resp)
 	return

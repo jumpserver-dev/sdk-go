@@ -16,11 +16,13 @@ type TerminalConfig struct {
 	HostKey             string        `json:"TERMINAL_HOST_KEY"`
 	EnableSessionShare  bool          `json:"SECURITY_SESSION_SHARE"`
 	MaxStoreFTPFileSize int           `json:"FTP_FILE_MAX_STORE"`
-	GptBaseUrl          string        `json:"GPT_BASE_URL"`
-	GptApiKey           string        `json:"GPT_API_KEY"`
-	GptProxy            string        `json:"GPT_PROXY"`
-	GptModel            string        `json:"GPT_MODEL"`
-	ChatAIType          string        `json:"CHAT_AI_TYPE"`
+	ChatAIEnabled       bool          `json:"CHAT_AI_ENABLED"`
+	ChatAIMethod        string        `json:"CHAT_AI_METHOD"`
+	ChatAIProvider      string        `json:"CHAT_AI_PROVIDER"`
+	ChatAIBaseUrl       string        `json:"CHAT_AI_BASE_URL"`
+	ChatAIApiKey        string        `json:"CHAT_AI_API_KEY"`
+	ChatAIProxy         string        `json:"CHAT_AI_PROXY"`
+	ChatAIModel         string        `json:"CHAT_AI_MODEL"`
 
 	LicenseContent string `json:"XPACK_LICENSE_CONTENT"`
 	LicenseIsValid bool   `json:"XPACK_LICENSE_IS_VALID"`

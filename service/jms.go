@@ -60,8 +60,23 @@ type JMService struct {
 	sync.Mutex
 }
 
+// WithResponse returns an independent service that also decodes JSON responses
+// into target. Use a pointer declaring only the extra fields needed by the caller.
+// The original service is unchanged; no raw response is retained.
+func (s *JMService) WithResponse(target any) *JMService {
+	return &JMService{authClient: s.authClient.WithResponse(target), opt: s.opt}
+}
+
 func (s *JMService) RegisterTerminal(name, token, componentName string) (res model.Terminal, err error) {
-	data := map[string]string{"name": name, "comment": componentName, "type": componentName}
+	return s.RegisterTerminalWithOptions(name, token, componentName, TerminalRegistrationOptions{})
+}
+
+func (s *JMService) RegisterTerminalWithOptions(name, token, componentName string,
+	options TerminalRegistrationOptions) (res model.Terminal, err error) {
+	data, err := terminalRegistrationRequest(name, componentName, options)
+	if err != nil {
+		return res, err
+	}
 	s.authClient.SetAuthSign(&httplib.CustomAuth{
 		AuthScheme: "BootstrapToken",
 		Token:      token,

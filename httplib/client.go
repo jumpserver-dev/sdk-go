@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -81,6 +82,19 @@ type Client struct {
 	http     *http.Client
 	authSign AuthSign
 	cfg      *opt
+
+	extraResponse any
+}
+
+// WithResponse returns an independent copy that also decodes JSON responses
+// into target. It shares the HTTP connection pool and retains no response bytes.
+// Reusing the copy writes each response into the same target.
+func (c *Client) WithResponse(target any) *Client {
+	client := *c
+	client.cookies = maps.Clone(c.cookies)
+	client.headers = maps.Clone(c.headers)
+	client.extraResponse = target
+	return &client
 }
 
 func (c *Client) Clone() Client {
@@ -93,12 +107,13 @@ func (c *Client) Clone() Client {
 		Transport: NewTransport(c.cfg.insecure),
 	}
 	return Client{
-		Timeout: c.Timeout,
-		baseUrl: c.baseUrl,
-		cookies: make(map[string]string),
-		headers: make(map[string]string),
-		http:    &con,
-		cfg:     c.cfg,
+		Timeout:       c.Timeout,
+		baseUrl:       c.baseUrl,
+		cookies:       make(map[string]string),
+		headers:       make(map[string]string),
+		http:          &con,
+		cfg:           c.cfg,
+		extraResponse: c.extraResponse,
 	}
 
 }
@@ -217,6 +232,7 @@ func (c *Client) Do(method, reqUrl string, data, res interface{}, params ...map[
 		return
 	}
 	// Unmarshal response body to result struct
+	res = c.responseDestination(res)
 	if res != nil {
 		switch {
 		case strings.Contains(resp.Header.Get("Content-Type"), "application/json"):
@@ -317,6 +333,7 @@ func (c *Client) handleResp(resp *http.Response, res interface{}) (err error) {
 		_, err = buf.ReadFrom(resp.Body)
 		return err
 	}
+	res = c.responseDestination(res)
 	if res != nil {
 		switch {
 		case strings.Contains(resp.Header.Get("Content-Type"), "application/json"):

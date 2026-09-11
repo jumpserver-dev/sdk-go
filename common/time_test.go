@@ -7,21 +7,16 @@ import (
 )
 
 func TestNewJSONTime(t *testing.T) {
-	jsonT := NewUTCTime(time.Now())
-	var s struct {
-		T UTCTime
-	}
-	s.T = jsonT
-	j, _ := json.Marshal(s)
-	t.Logf("%s\n", j)
-	var s2 struct {
-		T UTCTime
-	}
-	err := json.Unmarshal(j, &s2)
+	want := time.Date(2026, time.September, 11, 10, 20, 30, 0, time.FixedZone("UTC+8", 8*60*60))
+	data, err := json.Marshal(NewUTCTime(want))
 	if err != nil {
 		t.Fatal(err)
 	}
-	j2, _ := json.Marshal(s2)
-	t.Logf("%v %v", s2, s)
-	t.Logf("%s\n", j2)
+	if string(data) != `"2026-09-11 02:20:30 +0000"` {
+		t.Fatalf("unexpected UTC encoding: %s", data)
+	}
+	var got UTCTime
+	if err = json.Unmarshal(data, &got); err != nil || !got.Equal(want) {
+		t.Fatalf("round trip changed time: %v, error: %v", got, err)
+	}
 }

@@ -21,22 +21,38 @@ type SpecInfo struct {
 	AllowInvalidCert bool `json:"allow_invalid_cert"`
 
 	// web
-	Autofill         string `json:"autofill"`
-	UsernameSelector string `json:"username_selector"`
-	PasswordSelector string `json:"password_selector"`
-	SubmitSelector   string `json:"submit_selector"`
-	HttpProxy        string `json:"proxy"`
+	Autofill            string         `json:"autofill"`
+	UsernameSelector    string         `json:"username_selector"`
+	PasswordSelector    string         `json:"password_selector"`
+	SubmitSelector      string         `json:"submit_selector"`
+	HttpProxy           string         `json:"proxy"`
+	SuccessSelector     string         `json:"success_selector,omitempty"`
+	InteractiveSelector string         `json:"interactive_selector,omitempty"`
+	Script              []WebLoginStep `json:"script,omitempty"`
+	AllowedURLs         []string       `json:"allowed_urls,omitempty"`
+}
+
+type WebLoginStep struct {
+	Step    int    `json:"step"`
+	Command string `json:"command"`
+	Target  string `json:"target,omitempty"`
+	Value   string `json:"value,omitempty"`
+	Origin  string `json:"origin,omitempty"`
+	Timeout int    `json:"timeout,omitempty"`
 }
 
 type Asset struct {
-	ID         string       `json:"id"`
-	Address    string       `json:"address"`
-	Name       string       `json:"name"`
-	OrgID      string       `json:"org_id"`
-	Protocols  []Protocol   `json:"protocols"`
-	SpecInfo   SpecInfo     `json:"spec_info"`
-	SecretInfo SecretInfo   `json:"secret_info"`
-	Platform   BasePlatform `json:"platform"`
+	ID         string         `json:"id"`
+	Address    string         `json:"address"`
+	Name       string         `json:"name"`
+	OrgID      string         `json:"org_id"`
+	Protocols  []Protocol     `json:"protocols"`
+	SpecInfo   SpecInfo       `json:"spec_info"`
+	SecretInfo SecretInfo     `json:"secret_info"`
+	Platform   BasePlatform   `json:"platform"`
+	Category   LabelField     `json:"category,omitempty"`
+	Type       LabelField     `json:"type,omitempty"`
+	Info       map[string]any `json:"info,omitempty"`
 
 	Domain *BaseDomain `json:"domain"` // token 方式获取的资产，domain 为 nil
 

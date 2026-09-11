@@ -49,9 +49,21 @@ type VirtualAppOption struct {
 }
 
 type VirtualApp struct {
-	Name          string `json:"name"`
-	ImageName     string `json:"image_name"`
-	ImageProtocol string `json:"image_protocol"`
-	ImagePort     int    `json:"image_port"`
-	Error         string `json:"error"`
+	Name          string              `json:"name"`
+	ImageName     string              `json:"image_name"`
+	ImageProtocol string              `json:"image_protocol"`
+	ImagePort     int                 `json:"image_port"`
+	Error         string              `json:"error"`
+	Provider      *VirtualAppProvider `json:"provider,omitempty"`
+}
+
+type VirtualAppProvider struct {
+	ID      string   `json:"id"`
+	Name    string   `json:"name"`
+	Address string   `json:"address"`
+	HostID  *string  `json:"host_id,omitempty"`
+	Load    string   `json:"load"`
+	Host    Asset    `json:"host"`
+	Account Account  `json:"account"`
+	Gateway *Gateway `json:"gateway,omitempty"`
 }

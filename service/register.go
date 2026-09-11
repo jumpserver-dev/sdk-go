@@ -11,14 +11,36 @@ import (
 )
 
 func RegisterTerminalAccount(coreHost, componentName, name, token string) (res model.Terminal, err error) {
+	return RegisterTerminalAccountWithOptions(coreHost, componentName, name, token, TerminalRegistrationOptions{})
+}
+
+type TerminalRegistrationOptions struct {
+	ProviderID string `json:"provider_id,omitempty"`
+	// ExtraFields supplies future JSON fields; explicitly set typed fields win.
+	ExtraFields map[string]any `json:"-"`
+}
+
+func terminalRegistrationRequest(name, componentName string, options TerminalRegistrationOptions) (any, error) {
+	request := struct {
+		Name    string `json:"name"`
+		Comment string `json:"comment"`
+		Type    string `json:"type"`
+		TerminalRegistrationOptions
+	}{Name: name, Comment: componentName, Type: componentName, TerminalRegistrationOptions: options}
+	return requestWithExtra(request, options.ExtraFields)
+}
+
+func RegisterTerminalAccountWithOptions(coreHost, componentName, name, token string,
+	options TerminalRegistrationOptions) (res model.Terminal, err error) {
 	client, err := httplib.NewClient(coreHost, time.Second*30)
 	if err != nil {
 		return model.Terminal{}, err
 	}
 	client.SetHeader("Authorization", fmt.Sprintf("BootstrapToken %s", token))
-	data := map[string]string{"name": name,
-		"comment": componentName,
-		"type":    componentName}
+	data, err := terminalRegistrationRequest(name, componentName, options)
+	if err != nil {
+		return res, err
+	}
 	_, err = client.Post(TerminalRegisterURL, data, &res)
 	return
 }

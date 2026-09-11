@@ -77,11 +77,28 @@ func (c *ConnectToken) CreateSession(addr string,
 }
 
 type ConnectTokenInfo struct {
-	ID          string `json:"id"`
-	Value       string `json:"value"`
-	ExpireTime  int    `json:"expire_time"`
-	AccountName string `json:"account_name"`
-	Protocol    string `json:"protocol"`
+	ID                   string          `json:"id"`
+	Value                string          `json:"value"`
+	ExpireTime           int             `json:"expire_time"`
+	Protocol             string          `json:"protocol"`
+	Account              string          `json:"account,omitempty"`
+	User                 *ObjectId       `json:"user,omitempty"`
+	Asset                *ObjectId       `json:"asset,omitempty"`
+	InputUsername        string          `json:"input_username,omitempty"`
+	InputSecretType      string          `json:"input_secret_type,omitempty"`
+	PersonalCredentialID *string         `json:"personal_credential_id,omitempty"`
+	ConnectMethod        string          `json:"connect_method,omitempty"`
+	ConnectOptions       ConnectOptions  `json:"connect_options,omitempty"`
+	Actions              Actions         `json:"actions,omitempty"`
+	IsActive             *bool           `json:"is_active,omitempty"`
+	IsReusable           *bool           `json:"is_reusable,omitempty"`
+	IsExpired            *bool           `json:"is_expired,omitempty"`
+	DateExpired          *common.UTCTime `json:"date_expired,omitempty"`
+	OrgID                string          `json:"org_id,omitempty"`
+	OrgName              string          `json:"org_name,omitempty"`
+	RemoteAddr           string          `json:"remote_addr,omitempty"`
+	FaceToken            string          `json:"face_token,omitempty"`
+	FaceMonitorToken     string          `json:"face_monitor_token,omitempty"`
 
 	Ticket     *ObjectId  `json:"from_ticket,omitempty"`
 	TicketInfo TicketInfo `json:"from_ticket_info,omitempty"`
@@ -114,11 +131,13 @@ const (
 )
 
 type ConnectOptions struct {
-	Charset          *string `json:"charset,omitempty"`
-	DisableAutoHash  *bool   `json:"disableautohash,omitempty"`
-	BackspaceAsCtrlH *bool   `json:"backspaceAsCtrlH,omitempty"`
-	UseSysDBA        bool    `json:"use_sysdba,omitempty"`
-	Resolution       string  `json:"resolution"`
+	Charset            *string `json:"charset,omitempty"`
+	DisableAutoHash    *bool   `json:"disableautohash,omitempty"`
+	BackspaceAsCtrlH   *bool   `json:"backspaceAsCtrlH,omitempty"`
+	UseSysDBA          bool    `json:"use_sysdba,omitempty"`
+	Resolution         string  `json:"resolution"`
+	RemoteMicrophone   *bool   `json:"remote_microphone,omitempty"`
+	RDPConnectionSpeed string  `json:"rdp_connection_speed,omitempty"`
 
 	FilenameConflictResolution string `json:"file_name_conflict_resolution,omitempty"`
 	TerminalThemeName          string `json:"terminal_theme_name,omitempty"`

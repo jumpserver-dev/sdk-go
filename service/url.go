@@ -45,7 +45,7 @@ const (
 	UserDetailURL    = "/api/v1/users/users/%s/"
 	AssetPlatFormURL = "/api/v1/assets/assets/%s/platform/"
 
-	DomainDetailWithGateways = "/api/v1/assets/domains/%s/?gateway=1"
+	DomainDetailWithGateways = "/api/v1/assets/zones/%s/?gateway=1"
 
 	UserSuggestionsURL = "/api/v1/users/users/suggestions/"
 )
@@ -78,7 +78,7 @@ const (
 	SuperConnectTokenInfoURL   = "/api/v1/authentication/super-connection-token/"
 
 	UserPermsAssetAccountsURL = "/api/v1/perms/users/%s/assets/%s/"
-	AccountSecretURL          = "/api/v1/assets/account-secrets/%s/"
+	AccountSecretURL          = "/api/v1/accounts/account-secrets/%s/"
 	UserPermsAssetsURL        = "/api/v1/perms/users/%s/assets/"
 
 	AssetLoginConfirmURL = "/api/v1/acls/login-asset/check/"

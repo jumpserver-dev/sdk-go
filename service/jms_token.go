@@ -15,12 +15,27 @@ func (s *JMService) GetConnectTokenInfo(tokenId string, expireNow bool) (resp mo
 // an ephemeral SSH public key when the caller can use SSH certificates.
 func (s *JMService) GetConnectTokenInfoWithPublicKey(tokenId string, expireNow bool,
 	publicKey string) (resp model.ConnectToken, err error) {
-	data := map[string]interface{}{
-		"id":         tokenId,
-		"expire_now": expireNow,
-	}
-	if publicKey != "" {
-		data["public_key"] = publicKey
+	return s.GetConnectTokenInfoWithOptions(tokenId, ConnectTokenSecretOptions{
+		ExpireNow: &expireNow, PublicKey: publicKey,
+	})
+}
+
+type ConnectTokenSecretOptions struct {
+	ExpireNow *bool  `json:"expire_now,omitempty"`
+	PublicKey string `json:"public_key,omitempty"`
+	// ExtraFields supplies future JSON fields; explicitly set typed fields win.
+	ExtraFields map[string]any `json:"-"`
+}
+
+func (s *JMService) GetConnectTokenInfoWithOptions(tokenId string,
+	options ConnectTokenSecretOptions) (resp model.ConnectToken, err error) {
+	request := struct {
+		ID string `json:"id"`
+		ConnectTokenSecretOptions
+	}{ID: tokenId, ConnectTokenSecretOptions: options}
+	data, err := requestWithExtra(request, options.ExtraFields)
+	if err != nil {
+		return resp, err
 	}
 	_, err = s.authClient.Post(SuperConnectTokenSecretURL, data, &resp)
 	return
@@ -41,19 +56,34 @@ func (s *JMService) CreateSuperConnectToken(data *SuperConnectTokenReq) (resp mo
 	}
 	signKey := fmt.Sprintf("%s:%s", ak.ID, encryptKey)
 	apiClient.SetHeader(svcHeader, fmt.Sprintf("Sign %s", signKey))
-	_, err = apiClient.Post(SuperConnectTokenInfoURL, data, &resp, data.Params)
+	body, err := requestWithExtra(data, data.ExtraFields)
+	if err != nil {
+		return resp, err
+	}
+	_, err = apiClient.Post(SuperConnectTokenInfoURL, body, &resp, data.Params)
 	return
 }
 
 type SuperConnectTokenReq struct {
-	UserId        string `json:"user"`
-	AssetId       string `json:"asset"`
-	Account       string `json:"account"`
-	Protocol      string `json:"protocol"`
-	ConnectMethod string `json:"connect_method"`
-	InputUsername string `json:"input_username"`
-	InputSecret   string `json:"input_secret"`
-	RemoteAddr    string `json:"remote_addr"`
+	UserId                    string         `json:"user"`
+	AssetId                   string         `json:"asset"`
+	Account                   string         `json:"account"`
+	Protocol                  string         `json:"protocol"`
+	ConnectMethod             string         `json:"connect_method"`
+	InputUsername             string         `json:"input_username"`
+	InputSecret               string         `json:"input_secret"`
+	RemoteAddr                string         `json:"remote_addr"`
+	InputSecretType           string         `json:"input_secret_type,omitempty"`
+	ConnectOptions            map[string]any `json:"connect_options,omitempty"`
+	PersonalCredentialID      string         `json:"personal_credential_id,omitempty"`
+	PersonalCredentialVersion *int           `json:"personal_credential_version,omitempty"`
+	SavePersonalCredential    *bool          `json:"save_personal_credential,omitempty"`
+	IsActive                  *bool          `json:"is_active,omitempty"`
+	IsReusable                *bool          `json:"is_reusable,omitempty"`
+
+	// ExtraFields supplies future JSON fields; explicitly set typed fields win.
+	// Personal credentials still require Core's owner authentication checks.
+	ExtraFields map[string]any `json:"-"`
 
 	Params map[string]string `json:"-"`
 }

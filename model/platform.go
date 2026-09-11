@@ -55,7 +55,8 @@ func (p Platform) GetProtocolSetting(protocol string) (PlatformProtocol, bool) {
 
 type PlatformProtocol struct {
 	Protocol
-	Setting map[string]any `json:"setting"` // 参考 ProtocolSetting 里的字段
+	Setting     map[string]any `json:"setting"` // 参考 ProtocolSetting 里的字段
+	SecretTypes []string       `json:"secret_types,omitempty"`
 }
 
 func (p PlatformProtocol) GetSetting() ProtocolSetting {
@@ -67,13 +68,15 @@ func (p PlatformProtocol) GetSetting() ProtocolSetting {
 }
 
 type ProtocolSetting struct {
-	Security         string `json:"security"`
-	SftpEnabled      bool   `json:"sftp_enabled"`
-	SftpHome         string `json:"sftp_home"`
-	AutoFill         bool   `json:"auto_fill"`
-	UsernameSelector string `json:"username_selector"`
-	PasswordSelector string `json:"password_selector"`
-	SubmitSelector   string `json:"submit_selector"`
+	Security            string `json:"security"`
+	SftpEnabled         bool   `json:"sftp_enabled"`
+	SftpHome            string `json:"sftp_home"`
+	AutoFill            bool   `json:"auto_fill"`
+	UsernameSelector    string `json:"username_selector"`
+	PasswordSelector    string `json:"password_selector"`
+	SubmitSelector      string `json:"submit_selector"`
+	SuccessSelector     string `json:"success_selector,omitempty"`
+	InteractiveSelector string `json:"interactive_selector,omitempty"`
 
 	Console  bool   `json:"console"`
 	AdDomain string `json:"ad_domain"`

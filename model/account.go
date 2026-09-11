@@ -59,7 +59,8 @@ func (a *BaseAccount) IsAnonymous() bool {
 
 type Account struct {
 	BaseAccount
-	SuFrom *BaseAccount `json:"su_from"`
+	SuFrom     *BaseAccount `json:"su_from"`
+	Privileged bool         `json:"privileged,omitempty"`
 }
 
 func (a *Account) GetBaseAccount() *BaseAccount {

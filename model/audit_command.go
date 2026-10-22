@@ -12,12 +12,19 @@ type Command struct {
 	Account   string `json:"account"`
 	Timestamp int64  `json:"timestamp"`
 	RiskLevel int64  `json:"risk_level"`
+	Source    string `json:"source,omitempty"`
 
 	CmdFilterAclId string `json:"cmd_filter_acl"`
 	CmdGroupId     string `json:"cmd_group"`
 
 	DateCreated time.Time `json:"@timestamp"`
 }
+
+const (
+	CommandSourceUnknown = "unknown"
+	CommandSourceManual  = "manual"
+	CommandSourceAI      = "ai"
+)
 
 const (
 	NormalLevel  = 0

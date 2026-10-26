@@ -22,7 +22,7 @@ func TestConnectTokenFields(t *testing.T) {
 			if string(data["id"]) != `"token"` || string(data["expire_now"]) != "false" || string(data["future_request"]) != "true" {
 				t.Errorf("incorrect secret request: %s", data)
 			}
-			_, _ = w.Write([]byte(`{"id":"token","connect_options":{"remote_microphone":false,"rdp_connection_speed":"wan","printers_redirect":true,"future_option":true},"asset":{"spec_info":{"success_selector":"css=#done","interactive_selector":"css=#mfa","allowed_urls":["https://example.com"]}}}`))
+			_, _ = w.Write([]byte(`{"id":"token","connect_options":{"remote_microphone":false,"rdp_connection_speed":"wan","rdp_security":"tls","printers_redirect":true,"future_option":true},"asset":{"spec_info":{"success_selector":"css=#done","interactive_selector":"css=#mfa","allowed_urls":["https://example.com"]}}}`))
 		case SuperConnectTokenInfoURL:
 			if r.URL.Query().Get("create_ticket") != "true" || r.Header.Get(svcHeader) == "" {
 				t.Error("creation query/signature was lost")
@@ -64,6 +64,9 @@ func TestConnectTokenFields(t *testing.T) {
 	}
 	if token.ConnectOptions.PrintersRedirect == nil || !*token.ConnectOptions.PrintersRedirect {
 		t.Fatal("printer redirection was not enabled in the connection token")
+	}
+	if token.ConnectOptions.RDPSecurity != "tls" {
+		t.Fatal("RDP security layer was lost")
 	}
 	if !tokenFields.Options.Enabled {
 		t.Fatal("future option was lost")

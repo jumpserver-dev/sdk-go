@@ -22,7 +22,7 @@ func TestConnectTokenFields(t *testing.T) {
 			if string(data["id"]) != `"token"` || string(data["expire_now"]) != "false" || string(data["future_request"]) != "true" {
 				t.Errorf("incorrect secret request: %s", data)
 			}
-			_, _ = w.Write([]byte(`{"id":"token","connect_options":{"remote_microphone":false,"rdp_connection_speed":"wan","future_option":true},"asset":{"spec_info":{"success_selector":"css=#done","interactive_selector":"css=#mfa","allowed_urls":["https://example.com"]}}}`))
+			_, _ = w.Write([]byte(`{"id":"token","connect_options":{"remote_microphone":false,"rdp_connection_speed":"wan","printers_redirect":true,"future_option":true},"asset":{"spec_info":{"success_selector":"css=#done","interactive_selector":"css=#mfa","allowed_urls":["https://example.com"]}}}`))
 		case SuperConnectTokenInfoURL:
 			if r.URL.Query().Get("create_ticket") != "true" || r.Header.Get(svcHeader) == "" {
 				t.Error("creation query/signature was lost")
@@ -35,7 +35,7 @@ func TestConnectTokenFields(t *testing.T) {
 			if _, ok := data["personal_credential_version"]; ok {
 				t.Error("absent optional field was submitted")
 			}
-			_, _ = w.Write([]byte(`{"id":"token","user":{"id":"user","name":"User"},"asset":{"id":"asset","name":"Host"},"account":"@INPUT","is_active":false,"face_token":"face","personal_credential_id":null,"date_expired":null,"future_response":{"enabled":true}}`))
+			_, _ = w.Write([]byte(`{"id":"token","user":{"id":"user","name":"User"},"asset":{"id":"asset","name":"Host"},"account":"@INPUT","connect_options":{"printers_redirect":false},"is_active":false,"face_token":"face","personal_credential_id":null,"date_expired":null,"future_response":{"enabled":true}}`))
 		case SuperConnectTokenVirtualAppOptionURL:
 			_, _ = w.Write([]byte(`{"name":"app","provider":{"id":"provider","load":"offline","host":{"address":"192.0.2.1"},"account":{"username":"root","privileged":true},"gateway":null,"future_route":2222}}`))
 		default:
@@ -62,6 +62,9 @@ func TestConnectTokenFields(t *testing.T) {
 	if token.ConnectOptions.RemoteMicrophone == nil || *token.ConnectOptions.RemoteMicrophone || token.Asset.SpecInfo.SuccessSelector != "css=#done" {
 		t.Fatal("new connection fields were lost")
 	}
+	if token.ConnectOptions.PrintersRedirect == nil || !*token.ConnectOptions.PrintersRedirect {
+		t.Fatal("printer redirection was not enabled in the connection token")
+	}
 	if !tokenFields.Options.Enabled {
 		t.Fatal("future option was lost")
 	}
@@ -84,6 +87,9 @@ func TestConnectTokenFields(t *testing.T) {
 	}
 	if info.User == nil || info.Asset == nil {
 		t.Fatal("Core related-object fields were lost")
+	}
+	if info.ConnectOptions.PrintersRedirect == nil || *info.ConnectOptions.PrintersRedirect {
+		t.Fatal("explicitly disabled printer redirection was lost")
 	}
 	if !infoFields.Future.Enabled {
 		t.Fatal("creation response target was not decoded")

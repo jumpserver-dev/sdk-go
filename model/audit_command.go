@@ -12,7 +12,6 @@ type Command struct {
 	Account   string `json:"account"`
 	Timestamp int64  `json:"timestamp"`
 	RiskLevel int64  `json:"risk_level"`
-	Source    int    `json:"source"`
 
 	CmdFilterAclId string `json:"cmd_filter_acl"`
 	CmdGroupId     string `json:"cmd_group"`
